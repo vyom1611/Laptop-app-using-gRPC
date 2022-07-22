@@ -1,13 +1,16 @@
 syntax = "proto3";
 
-option go_package = "./pb";
+package vyom1611.laptop_app;
 
-import "keyboard_message.proto";
+
 import "processor_message.proto";
-import "screen_message.proto";
-import "storage_message.proto";
 import "memory_message.proto";
+import "storage_message.proto";
+import "screen_message.proto";
+import "keyboard_message.proto";
 import "google/protobuf/timestamp.proto";
+
+option go_package = "./pb";
 
 message Laptop {
     string id = 1;
@@ -15,7 +18,7 @@ message Laptop {
     string name = 3;
     CPU cpu = 4;
     Memory ram = 5;
-    //The repeated keyword is for multiple instances of the propety
+    //The repeated keyword is for multiple instances of the property
     repeated GPU gpus = 6;
     repeated Storage storages = 7;
     Screen screen = 8;

@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+package vyom1611.laptop_app;
 
 message Memory {
     //Custom data type enums

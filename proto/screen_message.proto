@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option go_package = "./pb";
 
+package vyom1611.laptop_app;
+
 message Screen {
     message Resolution {
         uint32 width = 1;
