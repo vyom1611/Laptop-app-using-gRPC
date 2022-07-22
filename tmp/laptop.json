@@ -1,0 +1,62 @@
+{
+ "id": "bd959bf3-f606-4d0f-9c7f-5afb1f438b25",
+ "brand": "Acer",
+ "name": "Swift 3",
+ "cpu": {
+  "brand": "Intel",
+  "name": "Core i7-9750H",
+  "cpu_cores": 7,
+  "cpu_threads": 8,
+  "min_ghz": 2.159684419636345,
+  "max_ghz": 2.1981148166742037
+ },
+ "ram": {
+  "value": "27",
+  "unit": "GIGABYTE"
+ },
+ "gpus": [
+  {
+   "brand": "NVIDIA",
+   "name": "GTX 1660-Ti",
+   "min_ghz": 1.3471016269822307,
+   "max_ghz": 1.7935633559304167,
+   "memory": {
+    "value": "4",
+    "unit": "GIGABYTE"
+   }
+  }
+ ],
+ "storages": [
+  {
+   "driver": "SSD",
+   "memory": {
+    "value": "761",
+    "unit": "GIGABYTE"
+   }
+  },
+  {
+   "driver": "HHD",
+   "memory": {
+    "value": "923",
+    "unit": "GIGABYTE"
+   }
+  }
+ ],
+ "screen": {
+  "size_inch": 15.406986,
+  "resolution": {
+   "width": 3282,
+   "height": 3282
+  },
+  "panel": "OLED",
+  "multitouch": false
+ },
+ "keyboard": {
+  "layout": "AZERTY",
+  "backlit": false
+ },
+ "weight_kg": 1.1835048557024828,
+ "price_usd": 1040.4442076168064,
+ "release_year": 2020,
+ "updated_at": "2022-07-22T08:00:03.599643Z"
+}

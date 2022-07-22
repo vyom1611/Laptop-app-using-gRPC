@@ -2,13 +2,18 @@ package sample
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/google/uuid"
 
-	"github.com/vyom1611/laptop-app-using-grpc/pb/pb"
+	"laptop-app-using-grpc/pb/pb"
 )
 
-func randomKeyboardLayout() pb.Keyboard_Layout{
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func randomKeyboardLayout() pb.Keyboard_Layout {
 	switch rand.Intn(3) {
 	case 1:
 		return pb.Keyboard_QWERTY
@@ -19,7 +24,7 @@ func randomKeyboardLayout() pb.Keyboard_Layout{
 	}
 }
 
-func randomBool() bool{
+func randomBool() bool {
 	return rand.Intn(2) == 1
 }
 
@@ -39,10 +44,10 @@ func randomCPUName(brand string) string {
 	if brand == "Intel" {
 		return randomStringFromSet(
 			"Xeon E-2286M",
-				"Core i9-9980HK",
-				"Core i7-9750H",
-				"Core i5-9400F",
-				"Core i3-1005G1",
+			"Core i9-9980HK",
+			"Core i7-9750H",
+			"Core i5-9400F",
+			"Core i3-1005G1",
 		)
 	}
 
@@ -50,8 +55,8 @@ func randomCPUName(brand string) string {
 		"Ryzen 7 PRO 2700U",
 		"Ryzen 5 PRO 3500U",
 		"Ryzen 3 PRO 3200GE",
-		)
-}	
+	)
+}
 
 func randomInt(min, max int) int {
 	return min + rand.Int()%(max-min+1)
@@ -59,12 +64,12 @@ func randomInt(min, max int) int {
 
 func randomFloat64(min float64, max float64) float64 {
 	//Logic for generating random between min and max
-	return min + rand.Float64() * (max-min)
+	return min + rand.Float64()*(max-min)
 }
 
 func randomFloat32(min float32, max float32) float32 {
 	//Logic for generating random between min and max
-	return min + rand.Float32() * (max-min)
+	return min + rand.Float32()*(max-min)
 }
 
 func randomGPUBrand() string {
@@ -90,7 +95,7 @@ func randomGPUName(brand string) string {
 }
 
 func randomScreenPanel() pb.Screen_Panel {
-	if rand.Intn(2) == 1{
+	if rand.Intn(2) == 1 {
 		return pb.Screen_IPS
 	}
 
@@ -151,9 +156,9 @@ func randomLaptopName(brand string) string {
 	}
 
 	return randomStringFromSet(
-			"Aspire 7",
-			"Swift 3",
-			"Nitro 5",
-			"Predator Helios",
-		)
+		"Aspire 7",
+		"Swift 3",
+		"Nitro 5",
+		"Predator Helios",
+	)
 }
