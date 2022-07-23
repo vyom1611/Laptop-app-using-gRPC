@@ -1,27 +1,27 @@
 {
- "id": "f94bdeac-3dc2-4bd9-a6e5-34719b9306de",
- "brand": "Dell",
- "name": "Vostro 15 3568",
+ "id": "9941c7e6-3d34-45fd-8315-e16349a85c44",
+ "brand": "Apple",
+ "name": "MacBook Pro",
  "cpu": {
   "brand": "Intel",
-  "name": "Core i9-9980HK",
-  "cpu_cores": 3,
-  "cpu_threads": 10,
-  "min_ghz": 2.741994591700579,
-  "max_ghz": 3.182525225885115
+  "name": "Core i3-1005G1",
+  "cpu_cores": 4,
+  "cpu_threads": 7,
+  "min_ghz": 2.973904596497074,
+  "max_ghz": 4.744139159947309
  },
  "ram": {
-  "value": "7",
+  "value": "64",
   "unit": "GIGABYTE"
  },
  "gpus": [
   {
-   "brand": "NVIDIA",
-   "name": "RTX 2060",
-   "min_ghz": 1.1555573281531821,
-   "max_ghz": 1.7387150359842027,
+   "brand": "AMD",
+   "name": "RX Vega-56",
+   "min_ghz": 1.407839890734299,
+   "max_ghz": 1.9162833199095115,
    "memory": {
-    "value": "2",
+    "value": "5",
     "unit": "GIGABYTE"
    }
   }
@@ -30,33 +30,33 @@
   {
    "driver": "SSD",
    "memory": {
-    "value": "189",
+    "value": "358",
     "unit": "GIGABYTE"
    }
   },
   {
    "driver": "HHD",
    "memory": {
-    "value": "140",
+    "value": "204",
     "unit": "GIGABYTE"
    }
   }
  ],
  "screen": {
-  "size_inch": 16.147562,
+  "size_inch": 14.267969,
   "resolution": {
-   "width": 2570,
-   "height": 2570
+   "width": 2699,
+   "height": 2699
   },
-  "panel": "IPS",
-  "multitouch": true
+  "panel": "OLED",
+  "multitouch": false
  },
  "keyboard": {
-  "layout": "QWERTY",
-  "backlit": false
+  "layout": "QWERTZ",
+  "backlit": true
  },
- "weight_kg": 2.0702259726511842,
- "price_usd": 2063.6677137062848,
- "release_year": 2013,
- "updated_at": "2022-07-22T08:49:32.807536Z"
+ "weight_kg": 1.3628847220678826,
+ "price_usd": 1047.0483386706244,
+ "release_year": 2014,
+ "updated_at": "2022-07-22T19:58:04.225492Z"
 }
