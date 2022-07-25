@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	"laptop-app-using-grpc/pb/pb"
 	"log"
+	"time"
 )
 
 //Laptop server which provides the services
@@ -39,6 +40,20 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 		}
 
 		laptop.Id = id.String()
+	}
+
+	//Time for heavy processing
+	time.Sleep(6 * time.Second)
+
+	//For cancelled and time out scenarios
+	if ctx.Err() == context.Canceled {
+		log.Print("Request is canceled")
+		return nil, status.Error(codes.Canceled, "Request is canceled")
+	}
+
+	if ctx.Err() == context.DeadlineExceeded {
+		log.Println("Deadline is extended")
+		return nil, status.Error(codes.DeadlineExceeded, "Deadline is exceeded")
 	}
 
 	//Save the laptop to in-memory store
