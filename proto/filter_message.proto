@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "memory_message.proto";
+
+option go_package = "./pb";
+
+package vyom1611.laptop_app;
+
+//Creating a filtering service for searching laptops in the store
+
+//Defining filter attributes
+message Filter {
+  double max_price_usd = 1;
+  uint32 min_cpu_cores = 2;
+  float min_cpu_ghz = 3;
+  Memory min_ram = 4;
+}

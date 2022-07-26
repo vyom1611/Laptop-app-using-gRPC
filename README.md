@@ -11,3 +11,4 @@ Steps completed till now:
 - Comparing temp bins for json and binary files to differentiate between the file sizes, the bin files are more space efficient
 - Created a proto service which uses unary-streaming gRPC and implemented a server to handle the unary RPC request
 - Added a client to call the unary RPC server and using unit tests for the interaction between server and client
+- Added server-streaming RPC to filter laptops while searching in store, then implementing server and client side RPC to handle calls and writing unit tests for them

@@ -15,6 +15,9 @@ type LaptopStore interface {
 	Save(laptop *pb.Laptop) error
 	//Find laptop by Id
 	Find(id string) (*pb.Laptop, error)
+
+	//Searching laptops and returning one by one with found function
+	Search(filter *pb.Filter, found func(laptop *pb.Laptop) error) error
 }
 
 //Store laptop in-memory
@@ -40,10 +43,9 @@ func (store *InMemoryLaptopStore) Save(laptop *pb.Laptop) error {
 	}
 
 	//deep copy
-	other := &pb.Laptop{}
-	err := copier.Copy(other, laptop)
+	other, err := DeepCopy(laptop)
 	if err != nil {
-		return fmt.Errorf("Cannot copy laptop data: %w", err)
+		return err
 	}
 
 	store.data[other.Id] = other
@@ -61,7 +63,71 @@ func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 		return nil, nil
 	}
 
-	//Deep copying to another object
+	return DeepCopy(laptop)
+}
+func (store *InMemoryLaptopStore) Search(filter *pb.Filter, found func(laptop *pb.Laptop) error) error {
+	store.mutex.RLock()
+	defer store.mutex.RUnlock()
+
+	//Looping through all the laptops in the store service
+	for _, laptop := range store.data {
+		if isQualified(filter, laptop) {
+			other, err := DeepCopy(laptop)
+			if err != nil {
+				return err
+			}
+
+			err = found(other)
+			if err != nil {
+				return err
+			}
+		}
+	}
+}
+
+func isQualified(filter *pb.Filter, laptop *pb.Laptop) bool {
+	if laptop.GetPriceUsd() > filter.GetMaxPriceUsd() {
+		return false
+	}
+
+	if laptop.GetCpu().GetCpuCores() < filter.GetMinCpuCores() {
+		return false
+	}
+
+	if laptop.GetCpu().GetMinGhz() < filter.GetMinCpuGhz() {
+		return false
+	}
+
+	if toBit(laptop.GetRam()) < toBit(filter.GetMinRam()) {
+		return false
+	}
+
+	return true
+}
+
+func toBit(memory *pb.Memory) uint64 {
+	value := memory.GetValue()
+
+	switch memory.GetUnit() {
+	case pb.Memory_BIT:
+		return value
+	case pb.Memory_BYTE:
+		return value << 3 // 2^3 = 8
+	case pb.Memory_KILOBYTE:
+		return value << 13
+	case pb.Memory_MEGABYTE:
+		return value << 23
+	case pb.Memory_GIGABYTE:
+		return value << 33
+	case pb.Memory_TERABYTE:
+		return value << 43
+	default:
+		return 0
+	}
+}
+
+//Deep Copy utility function
+func DeepCopy(laptop *pb.Laptop) (*pb.Laptop, error) {
 	other := &pb.Laptop{}
 	err := copier.Copy(other, laptop)
 	if err != nil {
