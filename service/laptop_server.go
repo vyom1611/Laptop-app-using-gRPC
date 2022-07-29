@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/status"
 	"laptop-app-using-grpc/pb/pb"
 	"log"
-	"time"
 )
 
 //Laptop server which provides the services
@@ -43,7 +42,9 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 	}
 
 	//Time for heavy processing
-	time.Sleep(6 * time.Second)
+	/*
+		time.Sleep(6 * time.Second)
+	*/
 
 	//For cancelled and time out scenarios
 	if ctx.Err() == context.Canceled {

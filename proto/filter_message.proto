@@ -11,6 +11,6 @@ package vyom1611.laptop_app;
 message Filter {
   double max_price_usd = 1;
   uint32 min_cpu_cores = 2;
-  float min_cpu_ghz = 3;
+  double min_cpu_ghz = 3;
   Memory min_ram = 4;
 }

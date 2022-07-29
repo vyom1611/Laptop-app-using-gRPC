@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/copier"
 	"laptop-app-using-grpc/pb/pb"
+
 	"sync"
 )
 
@@ -65,6 +66,7 @@ func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 
 	return DeepCopy(laptop)
 }
+
 func (store *InMemoryLaptopStore) Search(filter *pb.Filter, found func(laptop *pb.Laptop) error) error {
 	store.mutex.RLock()
 	defer store.mutex.RUnlock()
@@ -83,6 +85,8 @@ func (store *InMemoryLaptopStore) Search(filter *pb.Filter, found func(laptop *p
 			}
 		}
 	}
+
+	return nil
 }
 
 func isQualified(filter *pb.Filter, laptop *pb.Laptop) bool {
@@ -90,7 +94,7 @@ func isQualified(filter *pb.Filter, laptop *pb.Laptop) bool {
 		return false
 	}
 
-	if laptop.GetCpu().GetCpuCores() < filter.GetMinCpuCores() {
+	if laptop.GetCpu().GetNumberCores() < filter.GetMinCpuCores() {
 		return false
 	}
 
