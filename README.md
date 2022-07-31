@@ -1,6 +1,9 @@
 # Laptop-app-using-gRPC
 Creating an app to search for laptop configurations using gRPC and protobuf in Go
 
+###### _protoc --proto_path=proto proto/*.proto --go_out=proto --go-grpc_out=proto_
+
+
 Steps completed till now:
 - Created protobuf files
 - Created auto generated go files for protobuf
