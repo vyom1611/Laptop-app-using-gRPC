@@ -25,12 +25,12 @@ func NewCPU() *pb.CPU {
 	maxGhz := randomFloat64(minGhz, 5.0)
 
 	cpu := &pb.CPU{
-		Brand:         brand,
-		Name:          name,
-		NumberCores:   uint32(numberCores),
-		NumberThreads: uint32(numberThreads),
-		MinGhz:        minGhz,
-		MaxGhz:        maxGhz,
+		Brand:      brand,
+		Name:       name,
+		CpuCores:   uint32(numberCores),
+		CpuThreads: uint32(numberThreads),
+		MinGhz:     minGhz,
+		MaxGhz:     maxGhz,
 	}
 
 	return cpu
@@ -82,7 +82,7 @@ func NewSSD() *pb.Storage {
 
 func NewHHD() *pb.Storage {
 	hhd := &pb.Storage{
-		Driver: pb.Storage_HDD,
+		Driver: pb.Storage_HHD,
 		Memory: &pb.Memory{
 			Value: uint64(randomInt(128, 1024)),
 			Unit:  pb.Memory_GIGABYTE,

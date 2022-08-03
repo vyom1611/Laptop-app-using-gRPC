@@ -15,6 +15,11 @@ type LaptopServer struct {
 	Store LaptopStore
 }
 
+func (server *LaptopServer) mustEmbedUnimplementedLaptopServiceServer() {
+	//TODO implement me
+	panic("implement me")
+}
+
 //Returning a new laptop server
 func NewLaptopServer(store LaptopStore) *LaptopServer {
 	return &LaptopServer{store}
@@ -77,21 +82,24 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 }
 
 //Search Laptop is server-streaming RPC to seach for laptops
-func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.LaptopService_SearchLaptopServer) error {
+func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.LaptopService_SearchLaptopServer) (outErr error) {
 	filter := req.GetFilter()
 	log.Printf("Recieve a search laptop request with filter: %v", filter)
 
-	err := server.Store.Search(filter, func(laptop *pb.Laptop) error {
-		res := &pb.SearchLaptopResponse{Laptop: laptop}
+	err := server.Store.Search(
+		stream.Context(),
+		filter,
+		func(laptop *pb.Laptop) {
+			res := &pb.SearchLaptopResponse{Laptop: laptop}
 
-		err := stream.Send(res)
-		if err != nil {
-			return err
-		}
+			err := stream.Send(res)
+			if err != nil {
+				outErr = status.Errorf(codes.Unknown, "cannot send response: %v", err)
+				return
+			}
 
-		log.Printf("Send laptop with id: %s", laptop.GetId())
-		return nil
-	})
+			log.Printf("Send laptop with id: %s", laptop.GetId())
+		})
 	if err != nil {
 		return status.Errorf(codes.Internal, "unexpected error: %v", err)
 	}

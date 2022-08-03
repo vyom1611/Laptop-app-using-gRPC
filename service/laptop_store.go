@@ -1,10 +1,12 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/jinzhu/copier"
 	"laptop-app-using-grpc/pb/pb"
+	"log"
 
 	"sync"
 )
@@ -18,7 +20,7 @@ type LaptopStore interface {
 	Find(id string) (*pb.Laptop, error)
 
 	//Searching laptops and returning one by one with found function
-	Search(filter *pb.Filter, found func(laptop *pb.Laptop) error) error
+	Search(ctx context.Context, filter *pb.Filter, found func(laptop *pb.Laptop)) error
 }
 
 //Store laptop in-memory
@@ -67,22 +69,26 @@ func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 	return DeepCopy(laptop)
 }
 
-func (store *InMemoryLaptopStore) Search(filter *pb.Filter, found func(laptop *pb.Laptop) error) error {
+func (store *InMemoryLaptopStore) Search(ctx context.Context, filter *pb.Filter, found func(laptop *pb.Laptop)) error {
 	store.mutex.RLock()
 	defer store.mutex.RUnlock()
 
 	//Looping through all the laptops in the store service
 	for _, laptop := range store.data {
+		if ctx.Err() == context.Canceled || ctx.Err() == context.DeadlineExceeded {
+			log.Print("context is cancelled")
+			return nil
+		}
+
+		// time.Sleep(time.Second)
+		// log.Print("checking laptop id: ", laptop.GetId())
 		if isQualified(filter, laptop) {
 			other, err := DeepCopy(laptop)
 			if err != nil {
 				return err
 			}
 
-			err = found(other)
-			if err != nil {
-				return err
-			}
+			found(other)
 		}
 	}
 
@@ -94,7 +100,7 @@ func isQualified(filter *pb.Filter, laptop *pb.Laptop) bool {
 		return false
 	}
 
-	if laptop.GetCpu().GetNumberCores() < filter.GetMinCpuCores() {
+	if laptop.GetCpu().GetCpuCores() < filter.GetMinCpuCores() {
 		return false
 	}
 

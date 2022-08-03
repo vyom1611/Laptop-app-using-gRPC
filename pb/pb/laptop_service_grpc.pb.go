@@ -81,7 +81,6 @@ func (x *laptopServiceSearchLaptopClient) Recv() (*SearchLaptopResponse, error) 
 type LaptopServiceServer interface {
 	CreateLaptop(context.Context, *CreateLaptopRequest) (*CreateLaptopResponse, error)
 	SearchLaptop(*SearchLaptopRequest, LaptopService_SearchLaptopServer) error
-	mustEmbedUnimplementedLaptopServiceServer()
 }
 
 // UnimplementedLaptopServiceServer must be embedded to have forward compatible implementations.
