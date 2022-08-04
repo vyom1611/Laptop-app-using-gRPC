@@ -12,17 +12,13 @@ import (
 
 //Laptop server which provides the services
 type LaptopServer struct {
-	Store LaptopStore
-}
-
-func (server *LaptopServer) mustEmbedUnimplementedLaptopServiceServer() {
-	//TODO implement me
-	panic("implement me")
+	laptopStore LaptopStore
+	imageStore  ImageStore
 }
 
 //Returning a new laptop server
-func NewLaptopServer(store LaptopStore) *LaptopServer {
-	return &LaptopServer{store}
+func NewLaptopServer(laptopStore LaptopStore, imageStore ImageStore) *LaptopServer {
+	return &LaptopServer{laptopStore, imageStore}
 }
 
 //Creating the unary RPC to create a new laptop
@@ -63,7 +59,7 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 	}
 
 	//Save the laptop to in-memory store
-	err := server.Store.Save(laptop)
+	err := server.laptopStore.Save(laptop)
 	if err != nil {
 		code := codes.Internal
 		if errors.Is(err, ErrorAlreadyExists) {
@@ -86,7 +82,7 @@ func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.
 	filter := req.GetFilter()
 	log.Printf("Recieve a search laptop request with filter: %v", filter)
 
-	err := server.Store.Search(
+	err := server.laptopStore.Search(
 		stream.Context(),
 		filter,
 		func(laptop *pb.Laptop) {
@@ -105,4 +101,27 @@ func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.
 	}
 
 	return nil
+}
+
+//Upload Image is client-streaming RPC to upload laptop Images
+func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServer) error {
+	req, err := stream.Recv()
+	if err != nil {
+		return logError(status.Errorf(codes.Unknown, "Cannot receive image info"))
+	}
+
+	laptopID := req.GetInfo().GetLaptopId()
+	imageType := req.GetInfo().GetImageType()
+	log.Printf("Received an upload image request for laptop %s with image type %s", laptopID, imageType)
+
+	return nil
+}
+
+//Utility function for logging errors to console
+func logError(err error) error {
+	if err != nil {
+		log.Print(err)
+	}
+
+	return err
 }
