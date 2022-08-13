@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"context"
+	"fmt"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -11,6 +12,7 @@ import (
 	"laptop-app-using-grpc/serializer"
 	"laptop-app-using-grpc/service"
 	"net"
+	"os"
 	"testing"
 )
 
@@ -117,6 +119,32 @@ func TestClientSearchLaptop(t *testing.T) {
 	}
 
 	require.Equal(t, len(expectedIDs), found)
+}
+
+func testClientUploadImage(t *testing.T) {
+	t.Parallel()
+
+	testImageFolder := "../tmp"
+
+	laptopStore := service.NewInMemoryLaptopStore()
+	imageStore := service.NewDiskImageStore(testImageFolder)
+
+	laptop := sample.NewLaptop()
+	err := laptopStore.Save(laptop)
+	require.NoError(t, err)
+
+	serverAddress := startTestLaptopServer(t, laptopStore, imageStore)
+	laptopClient := newTestLaptopClient(t, serverAddress)
+
+	imgPath := fmt.Sprintf("%s/laptop.jpg", testImageFolder)
+	file, err := os.Open(imgPath)
+	require.NoError(t, err)
+	defer file.Close()
+
+	stream, err := laptopClient.UploadImage(context.Background())
+	require.NoError(t, err)
+
+	imageType := filePath.Ext(imgPath)
 }
 
 func startTestLaptopServer(t *testing.T, laptopStore service.LaptopStore, imageStore service.ImageStore) string {
