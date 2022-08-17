@@ -1,27 +1,27 @@
 {
- "id": "9941c7e6-3d34-45fd-8315-e16349a85c44",
+ "id": "fbee58ce-96cb-4fe1-a781-74d7d4907914",
  "brand": "Apple",
  "name": "MacBook Pro",
  "cpu": {
-  "brand": "Intel",
-  "name": "Core i3-1005G1",
-  "cpu_cores": 4,
-  "cpu_threads": 7,
-  "min_ghz": 2.973904596497074,
-  "max_ghz": 4.744139159947309
+  "brand": "AMD",
+  "name": "Ryzen 5 PRO 3500U",
+  "cpu_cores": 3,
+  "cpu_threads": 6,
+  "min_ghz": 3.0058999944984763,
+  "max_ghz": 3.6658478661167866
  },
  "ram": {
-  "value": "64",
+  "value": "43",
   "unit": "GIGABYTE"
  },
  "gpus": [
   {
-   "brand": "AMD",
-   "name": "RX Vega-56",
-   "min_ghz": 1.407839890734299,
-   "max_ghz": 1.9162833199095115,
+   "brand": "NVIDIA",
+   "name": "RTX 2060",
+   "min_ghz": 1.1421537678372409,
+   "max_ghz": 1.4229211300382156,
    "memory": {
-    "value": "5",
+    "value": "3",
     "unit": "GIGABYTE"
    }
   }
@@ -30,33 +30,33 @@
   {
    "driver": "SSD",
    "memory": {
-    "value": "358",
+    "value": "457",
     "unit": "GIGABYTE"
    }
   },
   {
    "driver": "HHD",
    "memory": {
-    "value": "204",
+    "value": "884",
     "unit": "GIGABYTE"
    }
   }
  ],
  "screen": {
-  "size_inch": 14.267969,
+  "size_inch": 15.480276,
   "resolution": {
-   "width": 2699,
-   "height": 2699
+   "width": 3363,
+   "height": 3363
   },
-  "panel": "OLED",
+  "panel": "IPS",
   "multitouch": false
  },
  "keyboard": {
   "layout": "QWERTZ",
-  "backlit": true
+  "backlit": false
  },
- "weight_kg": 1.3628847220678826,
- "price_usd": 1047.0483386706244,
- "release_year": 2014,
- "updated_at": "2022-07-22T19:58:04.225492Z"
+ "weight_kg": 1.0370347568845975,
+ "price_usd": 1599.9593020300376,
+ "release_year": 2012,
+ "updated_at": "2022-08-17T15:14:37.485999Z"
 }

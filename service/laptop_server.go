@@ -105,28 +105,34 @@ func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.
 
 //UploadImage is client-streaming RPC to upload laptop Images
 func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServer) error {
+	// The stream now starts receiving data
 	req, err := stream.Recv()
 	if err != nil {
 		return logError(status.Errorf(codes.Unknown, "Cannot receive image info"))
 	}
 
+	// Getting the laptop id and image type from the request
 	laptopID := req.GetInfo().GetLaptopId()
 	imageType := req.GetInfo().GetImageType()
 	log.Printf("Received an upload image request for laptop %s with image type %s", laptopID, imageType)
 
+	// Finding the laptop in the laptopStore with the obtained id
 	laptop, err := server.laptopStore.Find(laptopID)
 	if err != nil {
 		return logError(status.Errorf(codes.Internal, "Cannot find laptop: %v", err))
 	}
 
-	if laptop != nil {
+	// In-case the laptop does not exist in the store
+	if laptop == nil {
 		return logError(status.Errorf(codes.Internal, "Laptop %s does not exist", laptopID))
 	}
 
+	// Pre-defining an imageData buffer of bytes
 	imageData := bytes.Buffer{}
 	imageSize := 0
 
 	for {
+		// If stream does not get data
 		if err := contextError(stream.Context()); err != nil {
 			return nil
 		}
@@ -141,12 +147,16 @@ func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServe
 			return logError(status.Errorf(codes.Unknown, "Cannot receive chunk data: %v", err))
 		}
 
+		// Calling raw chunk data of bytes and setting its length equal to size of chunk
 		chunk := req.GetChunkData()
 		size := len(chunk)
 
 		log.Printf("Recieved a chunk with size: %d", size)
 
+		// Increasing imageSize with the chunk size
 		imageSize += size
+
+		// If image size is too large
 		if imageSize > maxImageSize {
 			return logError(status.Errorf(codes.InvalidArgument, "image is too large: %d > %d", imageSize, maxImageSize))
 		}
@@ -154,22 +164,26 @@ func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServe
 		// Write slowly
 		//time.Sleep(time.Second)
 
+		// Writing the data from uploaded image to bytes chunk
 		_, err = imageData.Write(chunk)
 		if err != nil {
 			return logError(status.Errorf(codes.Internal, "Cannot write chunk data: %v", err))
 		}
 	}
 
+	// Saving the image to the store
 	imageID, err := server.imageStore.Save(laptopID, imageType, imageData)
 	if err != nil {
 		return logError(status.Errorf(codes.Internal, "Cannot save image to the store: %v", err))
 	}
 
+	// Defining response with the upload image info
 	res := &pb.UploadImageResponse{
 		Id:   imageID,
 		Size: uint32(imageSize),
 	}
 
+	// Closing the stream after receiving data
 	err = stream.SendAndClose(res)
 	if err != nil {
 		return logError(status.Errorf(codes.Unknown, "Cannot send response: %v", err))

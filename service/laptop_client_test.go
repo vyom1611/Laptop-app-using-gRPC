@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/require"
@@ -13,8 +14,11 @@ import (
 	"laptop-app-using-grpc/service"
 	"net"
 	"os"
+	"path/filepath"
 	"testing"
 )
+
+// Unit-Tests for all RPCs created and used on client-side
 
 func TestClientCreateLaptop(t *testing.T) {
 	t.Parallel()
@@ -46,6 +50,7 @@ func TestClientCreateLaptop(t *testing.T) {
 func TestClientSearchLaptop(t *testing.T) {
 	t.Parallel()
 
+	// defining an example filter
 	filter := &pb.Filter{
 		MaxPriceUsd: 2000,
 		MinCpuGhz:   2.2,
@@ -53,9 +58,11 @@ func TestClientSearchLaptop(t *testing.T) {
 		MinRam:      &pb.Memory{Value: 8, Unit: pb.Memory_GIGABYTE},
 	}
 
+	// creating a new Laptop Store to test with
 	laptopStore := service.NewInMemoryLaptopStore()
 	expectedIDs := make(map[string]bool)
 
+	// Creating 6 sample new laptops with different configs for each case
 	for i := 0; i < 6; i++ {
 		laptop := sample.NewLaptop()
 
@@ -93,6 +100,7 @@ func TestClientSearchLaptop(t *testing.T) {
 			expectedIDs[laptop.Id] = true
 		}
 
+		// Saving the generated laptops to store
 		err := laptopStore.Save(laptop)
 		require.NoError(t, err)
 	}
@@ -107,44 +115,109 @@ func TestClientSearchLaptop(t *testing.T) {
 	//Laptops found
 	found := 0
 	for {
+		// Receiving data in stream
 		res, err := stream.Recv()
 		if err == io.EOF {
 			break
 		}
 
 		require.NoError(t, err)
+		// Testing if expectedIDs are in the generated laptops data
 		require.Contains(t, expectedIDs, res.GetLaptop().GetId())
 
+		// Increasing count for correct findings
 		found += 1
 	}
 
+	// Checking if total found laptops are equal to length of expected Ids
 	require.Equal(t, len(expectedIDs), found)
 }
 
-func testClientUploadImage(t *testing.T) {
+func TestClientUploadImage(t *testing.T) {
 	t.Parallel()
 
+	// All temporary data in tests go to /tmp folder
 	testImageFolder := "../tmp"
 
+	// Creating a laptop and image store for testing
 	laptopStore := service.NewInMemoryLaptopStore()
 	imageStore := service.NewDiskImageStore(testImageFolder)
 
 	laptop := sample.NewLaptop()
+
+	// Saving a new generated laptop to store
 	err := laptopStore.Save(laptop)
 	require.NoError(t, err)
 
+	// Starting laptop server
 	serverAddress := startTestLaptopServer(t, laptopStore, imageStore)
 	laptopClient := newTestLaptopClient(t, serverAddress)
 
+	// Defining image path in tmp folder
 	imgPath := fmt.Sprintf("%s/laptop.jpg", testImageFolder)
 	file, err := os.Open(imgPath)
 	require.NoError(t, err)
 	defer file.Close()
 
+	// Using uploadImage RPC on a new stream of this context
 	stream, err := laptopClient.UploadImage(context.Background())
 	require.NoError(t, err)
 
-	imageType := filePath.Ext(imgPath)
+	// Imagetype is the file extension
+	imageType := filepath.Ext(imgPath)
+
+	// making a request model
+	req := &pb.UploadImageRequest{
+		Data: &pb.UploadImageRequest_Info{
+			Info: &pb.ImageInfo{
+				LaptopId:  laptop.GetId(),
+				ImageType: imageType,
+			},
+		},
+	}
+
+	// Sending the request in the stream
+	err = stream.Send(req)
+	require.NoError(t, err)
+
+	reader := bufio.NewReader(file)
+	buffer := make([]byte, 1024)
+	size := 0
+
+	for {
+		// Checking for bytes buffer which are read
+		n, err := reader.Read(buffer)
+		if err == io.EOF {
+			break
+		}
+		require.NoError(t, err)
+		// Increasing size of file in correspondence to the buffer length
+		size += n
+
+		// Making the created chunks of buffer into new request
+		req := &pb.UploadImageRequest{
+			Data: &pb.UploadImageRequest_ChunkData{
+				ChunkData: buffer[:n],
+			},
+		}
+
+		// Sending the new request to the stream
+		err = stream.Send(req)
+		require.NoError(t, err)
+	}
+
+	// Closing the stream after receiving data and sending a response
+	res, err := stream.CloseAndRecv()
+
+	// Checking for errors from the response
+	require.NoError(t, err)
+	require.NotZero(t, laptop.GetId())
+	require.EqualValues(t, size, res.GetSize())
+
+	savedImagePath := fmt.Sprintf("%s/%s%s", testImageFolder, res.GetId(), imageType)
+
+	require.FileExists(t, savedImagePath)
+	require.NoError(t, os.Remove(savedImagePath))
 }
 
 func startTestLaptopServer(t *testing.T, laptopStore service.LaptopStore, imageStore service.ImageStore) string {
