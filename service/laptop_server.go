@@ -19,11 +19,12 @@ const maxImageSize = 1 << 20
 type LaptopServer struct {
 	laptopStore LaptopStore
 	imageStore  ImageStore
+	RatingStore RatingStore
 }
 
 // NewLaptopServer Returning a new laptop server
-func NewLaptopServer(laptopStore LaptopStore, imageStore ImageStore) *LaptopServer {
-	return &LaptopServer{laptopStore, imageStore}
+func NewLaptopServer(laptopStore LaptopStore, imageStore ImageStore, ratingStore RatingStore) *LaptopServer {
+	return &LaptopServer{laptopStore, imageStore, ratingStore}
 }
 
 // CreateLaptop Creating the unary RPC to create a new laptop
@@ -190,6 +191,11 @@ func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServe
 	}
 
 	log.Printf("Saved image with id: %s, size: %d", imageID, imageSize)
+	return nil
+}
+
+//
+func (server *LaptopServer) Ratelaptop(stream pb.LaptopService_RateLaptopServer) error {
 	return nil
 }
 

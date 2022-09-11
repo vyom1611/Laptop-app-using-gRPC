@@ -8,7 +8,7 @@ Steps completed till now:
 - Created protobuf files
 - Created auto generated go files for protobuf
 - Added Makefile commands
-- Sample generators with protobug and Go
+- Sample generators with protobuf and Go
 - Serializing proto messages
 - Running end-to-end tests while serializing proto messages to both binary and json
 - Comparing temp bins for json and binary files to differentiate between the file sizes, the bin files are more space efficient
@@ -17,3 +17,4 @@ Steps completed till now:
 - Added server-streaming RPC to filter laptops while searching in store, then implementing server and client side RPC to handle calls and writing unit tests for them
 - Defined client-streaming RPC to upload laptop image to store
 - Added client calls and server handlers for client-streaming while implementing unit tests for both
+- Implemented Bi-Directional Streaming RPC to create the functionality of rating laptops and writing the unit tests
