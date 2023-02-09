@@ -20,8 +20,8 @@ type InMemoryRatingStore struct {
 	rating map[string]*Rating
 }
 
-// NewInMemoryStore returns a new store for laptop ratings store
-func NewInMemoryStore() *InMemoryRatingStore {
+// NewInMemoryRatingStore NewInMemoryStore returns a new store for laptop ratings store
+func NewInMemoryRatingStore() *InMemoryRatingStore {
 	return &InMemoryRatingStore{
 		rating: make(map[string]*Rating),
 	}

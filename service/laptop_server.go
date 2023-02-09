@@ -196,6 +196,47 @@ func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServe
 
 //
 func (server *LaptopServer) Ratelaptop(stream pb.LaptopService_RateLaptopServer) error {
+	for {
+		err := contextError(stream.Context())
+		if err != nil {
+			return err
+		}
+
+		req, err := stream.Recv()
+		if err == io.EOF {
+			log.Print("No more data, end of file reached")
+			break
+		}
+		if err != nil {
+			return logError(status.Errorf(codes.Unknown, "cannot receive stream request: %v", err))
+		}
+
+		laptopId := req.GetLaptopId()
+		rating_score := req.GetScore()
+
+		log.Printf("received a request to rate laptops: \n Id: %s \n RatingScore: %.2f\n", laptopId, rating_score)
+
+		found, err := server.laptopStore.Find(laptopId)
+		if err != nil {
+			return logError(status.Errorf(codes.Internal, "cannot find laptop from request: %v", err))
+		}
+		if found == nil {
+			return logError(status.Errorf(codes.NotFound, "Laptop with id %s could not be found", laptopId))
+		}
+
+		rating, err := server.RatingStore.Add(laptopId, rating_score)
+		if err != nil {
+			return logError(status.Errorf(codes.Internal, "cannot add rating to store: %v", err))
+		}
+
+		res := &pb.RateLaptopResponse{
+			LaptopId:     laptopId,
+			RatedCount:   rating.Count,
+			AverageScore: rating.Sum / float64(rating.Count),
+		}
+		err = stream.Send(res)
+	}
+
 	return nil
 }
 

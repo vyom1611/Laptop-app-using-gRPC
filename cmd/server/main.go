@@ -18,8 +18,9 @@ func main() {
 	//Defining stores
 	laptopStore := service.NewInMemoryLaptopStore()
 	imageStore := service.NewDiskImageStore("img")
+	ratingStore := service.NewInMemoryRatingStore()
 	//Creating a laptop server service
-	laptopServer := service.NewLaptopServer(laptopStore, imageStore)
+	laptopServer := service.NewLaptopServer(laptopStore, imageStore, ratingStore)
 	//Creating a grpc web server
 	grpcServer := grpc.NewServer()
 	//Adding laptop server in grpc service
