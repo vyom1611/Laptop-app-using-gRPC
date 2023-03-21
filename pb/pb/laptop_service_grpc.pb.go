@@ -150,7 +150,6 @@ type LaptopServiceServer interface {
 	SearchLaptop(*SearchLaptopRequest, LaptopService_SearchLaptopServer) error
 	UploadImage(LaptopService_UploadImageServer) error
 	RateLaptop(LaptopService_RateLaptopServer) error
-	mustEmbedUnimplementedLaptopServiceServer()
 }
 
 // UnimplementedLaptopServiceServer must be embedded to have forward compatible implementations.
