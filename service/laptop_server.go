@@ -194,8 +194,7 @@ func (server *LaptopServer) UploadImage(stream pb.LaptopService_UploadImageServe
 	return nil
 }
 
-//
-func (server *LaptopServer) Ratelaptop(stream pb.LaptopService_RateLaptopServer) error {
+func (server *LaptopServer) RateLaptop(stream pb.LaptopService_RateLaptopServer) error {
 	for {
 		err := contextError(stream.Context())
 		if err != nil {
