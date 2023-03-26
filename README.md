@@ -18,3 +18,15 @@ Steps completed till now:
 - Defined client-streaming RPC to upload laptop image to store
 - Added client calls and server handlers for client-streaming while implementing unit tests for both
 - Implemented Bi-Directional Streaming RPC to create the functionality of rating laptops and writing the unit tests
+
+- Added Evans CLI with gRPC reflection package for more intuitive gRPC actions
+
+## HOW TO RUN THE PROJECT
+
+- download the file and go to its directory in the command line
+- run the backend using command `make server`
+- open another instance of your command line and run `evans -r repl -p {PORT}` with the port of the backend as the argument
+- call `package vyom1611.laptop_app`, and `service LaptopService`
+- use the command `show service` to see the available actions and call the desired RPCs using `service {RPC}`
+- follow along the prompts showed
+- Note: if you want to stop adding details into a list (ex. multiple storages in CreateLaptop), then use `cmd/ctrl + D` to escape

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"laptop-app-using-grpc/pb/pb"
 	"laptop-app-using-grpc/service"
 	"log"
@@ -25,6 +26,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	//Adding laptop server in grpc service
 	pb.RegisterLaptopServiceServer(grpcServer, laptopServer)
+
+	reflection.Register(grpcServer)
 
 	address := fmt.Sprintf("0.0.0.0:%d", *port)
 	listener, err := net.Listen("tcp", address)
